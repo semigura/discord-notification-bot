@@ -35,7 +35,7 @@ async function checkPlaylistChanges() {
         const addedBy = track.added_by.id;
         const trackUrl = track.track.external_urls.spotify; // 曲のURLを取得
 
-        const message = `新しい曲が追加されたよ！\n曲名: **${trackName}**\nアーティスト: **${artistName}**\n追加したユーザー: **${addedBy}**\nURL: **${trackUrl}**`;
+        const message = `新しい曲が追加されたよ！\n曲名: **[${trackName}](${trackUrl})**\nアーティスト: **${artistName}**\n追加したユーザー: **${addedBy}**`;
         sendDiscordMessage(message);
       }
       lastTracksCount = tracks.length;
@@ -58,7 +58,7 @@ async function refreshAccessToken() {
 }
 
 function sendDiscordMessage(message) {
-  const channel = client.channels.cache.get(process.env.DISCORD_CHANNEL_ID);
+  const channel = client.channels.cache.get(process.env.DISCORD_SPOTIFY_CHANNEL_ID);
   if (channel) {
     channel.send(message);
   } else {
