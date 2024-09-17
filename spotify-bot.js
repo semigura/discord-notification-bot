@@ -29,7 +29,7 @@ function createTrackMessage(track) {
   const addedBy = track.added_by.id;
   const trackUrl = track.track.external_urls.spotify;
 
-  return `新しい曲が追加されたよ！\n曲名: **[${trackName}](${trackUrl})**\nアーティスト: **${artistName}**\n追加したユーザー: **${addedBy}**`;
+  return `新しい曲が追加されたよ！\n曲名: **${trackName}**\nアーティスト: **${artistName}**\n追加したユーザー: **${addedBy}**\n${trackUrl}`;
 }
 
 async function checkPlaylistChanges() {
