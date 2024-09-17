@@ -42,7 +42,7 @@ async function checkPlaylistUpdates() {
       const channelTitle = videoDetails.snippet.videoOwnerChannelTitle;
       const url = `https://www.youtube.com/watch?v=${videoId}`;
 
-      const message = `新しい動画が追加されたよ！\n動画名: **${title}**\nチャンネル名: **${channelTitle}\n${url}`;
+      const message = `新しい動画が追加されたよ！\n動画名: **${title}**\nチャンネル名: **${channelTitle}**\n${url}`;
       const channel = await client.channels.fetch(process.env.DISCORD_YOUTUBE_CHANNEL_ID);
       await channel.send(message);
     }
