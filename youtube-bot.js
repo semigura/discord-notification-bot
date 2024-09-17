@@ -48,6 +48,7 @@ async function checkPlaylistUpdates() {
     }
 
     lastKnownVideos = currentVideos;
+    console.log(lastKnownVideos);
   } catch (error) {
     console.error("Error checking playlist updates:", error);
   }
