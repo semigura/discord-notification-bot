@@ -80,7 +80,7 @@ async function refreshAccessToken() {
 }
 
 async function sendDiscordMessage(message) {
-  const channel = client.channels.cache.get(process.env.DISCORD_CHANNEL_ID);
+  const channel = client.channels.cache.get(process.env.DISCORD_SPOTIFY_CHANNEL_ID);
   if (channel) {
     await channel.send(message);
   } else {
