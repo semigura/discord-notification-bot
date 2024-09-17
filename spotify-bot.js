@@ -61,6 +61,7 @@ async function checkPlaylistChanges() {
     } else {
       console.log("No new tracks found.");
     }
+    console.log(tracksRecord);
   } catch (error) {
     console.error("Error checking playlist changes:", error);
   }
