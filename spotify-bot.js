@@ -14,12 +14,23 @@ const spotifyApi = new SpotifyWebApi({
 
 const PLAYLIST_ID = process.env.SPOTIFY_PLAYLIST_ID;
 const CHECK_INTERVAL = 60000; // 1分ごとにチェック
-let lastTracksCount = 0;
+
+// トラックを記録するための連想配列
+let tracksRecord = {};
 
 client.once("ready", () => {
   console.log("Discord bot is ready!");
   checkPlaylistChanges();
 });
+
+function createTrackMessage(track) {
+  const trackName = track.track.name;
+  const artistName = track.track.artists[0].name;
+  const addedBy = track.added_by.id;
+  const trackUrl = track.track.external_urls.spotify;
+
+  return `新しい曲が追加されたよ！\n曲名: **[${trackName}](${trackUrl})**\nアーティスト: **${artistName}**\n追加したユーザー: **${addedBy}**`;
+}
 
 async function checkPlaylistChanges() {
   try {
@@ -27,18 +38,28 @@ async function checkPlaylistChanges() {
     const playlist = await spotifyApi.getPlaylist(PLAYLIST_ID);
     const tracks = playlist.body.tracks.items;
 
-    if (tracks.length > lastTracksCount) {
-      const newTracks = tracks.slice(lastTracksCount);
-      for (const track of newTracks) {
-        const trackName = track.track.name;
-        const artistName = track.track.artists[0].name;
-        const addedBy = track.added_by.id;
-        const trackUrl = track.track.external_urls.spotify; // 曲のURLを取得
+    const newTracks = [];
 
-        const message = `新しい曲が追加されたよ！\n曲名: **[${trackName}](${trackUrl})**\nアーティスト: **${artistName}**\n追加したユーザー: **${addedBy}**`;
-        sendDiscordMessage(message);
+    for (const track of tracks) {
+      const trackId = track.track.id;
+      if (!tracksRecord[trackId]) {
+        newTracks.push(track);
+        tracksRecord[trackId] = {
+          name: track.track.name,
+          artist: track.track.artists[0].name,
+          addedBy: track.added_by.id,
+          addedAt: track.added_at,
+        };
       }
-      lastTracksCount = tracks.length;
+    }
+
+    if (newTracks.length > 0) {
+      for (const track of newTracks) {
+        const message = createTrackMessage(track);
+        await sendDiscordMessage(message);
+      }
+    } else {
+      console.log("No new tracks found.");
     }
   } catch (error) {
     console.error("Error checking playlist changes:", error);
@@ -57,10 +78,10 @@ async function refreshAccessToken() {
   }
 }
 
-function sendDiscordMessage(message) {
-  const channel = client.channels.cache.get(process.env.DISCORD_SPOTIFY_CHANNEL_ID);
+async function sendDiscordMessage(message) {
+  const channel = client.channels.cache.get(process.env.DISCORD_CHANNEL_ID);
   if (channel) {
-    channel.send(message);
+    await channel.send(message);
   } else {
     console.error("Discord channel not found");
   }
